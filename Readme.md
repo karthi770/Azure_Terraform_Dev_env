@@ -10,8 +10,8 @@ Follow the steps shown below:
 You can verify if the account has been logged in by using this command `az account show`
 ![image](https://github.com/karthi770/Jira_GitHub_intergration_Python/assets/102706119/f10d289c-d9ee-43a2-9405-361ca9f49f38)
 
-```json
-//main.tf
+```python
+#main.tf
 terraform {
   required_providers {
     azurerm = {
@@ -39,7 +39,7 @@ resource "azurerm_resource_group" "new-rg" {
 >Use `terraform state list` that will list the available resources and then type `terraform state show <resource>`
 ### Subnet creation
 
-```json
+```python
 resource "azurerm_subnet" "mtc-subnet" {
   name                 = "new-subnet"
   resource_group_name  = azurerm_resource_group.new-rg.name
@@ -51,7 +51,7 @@ resource "azurerm_subnet" "mtc-subnet" {
 
 The rule for the security group can be either inline or can be deployed as a separate resource. In our case we are trying to create a separate resource for the security group rule.
 
-```json
+```python
 resource "azurerm_network_security_group" "new-sg" {
     name = "new-security"
     location = azurerm_resource_group.new-rg.location
@@ -63,7 +63,7 @@ resource "azurerm_network_security_group" "new-sg" {
 }
 ```
 
-```json
+```python
 resource "azurerm_network_security_rule" "new-sr" {
   name                        = "new-security-rule"
   priority                    = 100
@@ -79,7 +79,7 @@ resource "azurerm_network_security_rule" "new-sr" {
 }
 ```
 
-```json
+```python
 resource "azurerm_subnet_network_security_group_association" "new-sga" {
   subnet_id                 = azurerm_subnet.new-subnet.id
   network_security_group_id = azurerm_network_security_group.new-sg.id
@@ -87,7 +87,7 @@ resource "azurerm_subnet_network_security_group_association" "new-sga" {
 ```
 
 ### IP address configuration
-```json
+```python
 resource "azurerm_public_ip" "new-ip" {
   name                = "new-ip address"
   resource_group_name = azurerm_resource_group.new-rg.name
@@ -102,7 +102,7 @@ resource "azurerm_public_ip" "new-ip" {
 >[!info]
 >Even after we create `azurerm_public_ip` the ip address won’t be displayed, one of the reasons is the allocation method is Dynamic and we need to create the other resources so that we can get access to the IP address.
 
-```json
+```python
 resource "azurerm_network_interface" "new-nic" {
   name                = "new-network-interface"
   location            = azurerm_resource_group.new-rg.location
@@ -127,7 +127,7 @@ resource "azurerm_network_interface" "new-nic" {
 - While creating the Virtual machine we need to mention the path of the keygen.
 ### Create a Virtual Machine
 
-```json
+```python
 resource "azurerm_linux_virtual_machine" "new-vm" {
   name                = "new-virtual-machine"
   resource_group_name = azurerm_resource_group.new-rg.name
@@ -189,7 +189,7 @@ sudo sudo apt-get install docker-ce docker-ce-cli containered.io -y &&
 sudo usermod -aG docker ubuntu
 ```
 
-```json
+```python
 resource "azurerm_linux_virtual_machine" "new-vm" {
   name                = "new-virtual-machine"
   resource_group_name = azurerm_resource_group.new-rg.name
@@ -206,7 +206,7 @@ resource "azurerm_linux_virtual_machine" "new-vm" {
     username   = "adminuser"
     public_key = file("~/.ssh/id_rsa.pub")
   }
-  // code continues ...
+ # code continues ...
 ```
 >[!seealso]
 >This is updated line of code while executing the VM again.
@@ -228,7 +228,7 @@ EOF
 
 ### Provisioners 
 
-```json
+```python
 
 resource "azurerm_linux_virtual_machine" "new-vm" {
   name                = "new-virtual-machine"
@@ -240,7 +240,7 @@ resource "azurerm_linux_virtual_machine" "new-vm" {
     azurerm_network_interface.new-nic.id,
   ]
   
-	 //code inbetween ...
+	 #code inbetween ...
 	 
   custom_data = filebase64("customdata.tpl")
   provisioner "local-exec" {
@@ -263,7 +263,7 @@ resource "azurerm_linux_virtual_machine" "new-vm" {
 
 ### Data Source
 
-```json
+```python
 data "azurerm_public_ip" "mtc-ip-data"{
   name = azurerm_public_ip.new-ip.name
   resource_group_name = azurerm_resource_group.new-rg.name
@@ -275,7 +275,7 @@ data "azurerm_public_ip" "mtc-ip-data"{
 
 ### Output
 
-```json
+```python
 output "public_ip_address" {
   value = "${azurerm_linux_virtual_machine.new-vm.name}: ${data.azurerm_public_ip.mtc-ip-data.ip_address}"
 }
@@ -287,7 +287,7 @@ output "public_ip_address" {
 
 ### Variables
 
-```json
+```python
   custom_data = filebase64("customdata.tpl")
   provisioner "local-exec" {
     command = templatefile("${var.host_os}-script.tpl", {
@@ -303,7 +303,7 @@ output "public_ip_address" {
 > Create a `variable.tf` file  and add the variable block
 > 
 
-```json
+```python
 variable "host_os" {
   type = string
   default = "windows"
@@ -327,7 +327,7 @@ variable "host_os" {
 
 ### Conditionals
 
-```bash
+```python
 condition ? true_val : false_val
 ```
 
@@ -338,7 +338,7 @@ condition ? true_val : false_val
 >`var.host_os == "linux" ? "bash" : "poweshell"`
 >In the above code the if the var.host_os == linux the output will be linux. We shall give this condition to the interpreter that has both the ssh config files of windows and linux.
 
-```json
+```python
 interpreter = var.host_os == "windows" ? ["Powershell","-Command"] : ["bash", "-c"]
 ```
 
