@@ -1,3 +1,5 @@
+![Untitled](https://github.com/karthi770/Azure_Terraform_Dev_env/assets/102706119/b61236f3-a5c9-4603-b4a4-804b56c49300)
+
 Installing the Azure CLI from the following documentation:
 
 ![image](https://github.com/karthi770/Jira_GitHub_intergration_Python/assets/102706119/2993a0ab-3d09-43d9-a100-751c30adefbd)
